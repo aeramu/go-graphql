@@ -16,14 +16,12 @@ type QnAService interface{
 
 func NewQnAService()(QnAService){
   return &QnAServiceImplementation{
-    questionRepo: repository.NewQuestionRepository(),
-    accountRepo: repository.NewAccountRepository(),
+    QuestionRepository: repository.NewQuestionRepository(),
   }
 }
 
 type QnAServiceImplementation struct{
-  questionRepo repository.QuestionRepository
-  accountRepo repository.AccountRepository
+  QuestionRepository repository.QuestionRepository
 }
 
 func (service *QnAServiceImplementation) AnswerQuestion(questionID graphql.ID, body string)(*model.AnswerModel, error){
@@ -36,27 +34,25 @@ func (service *QnAServiceImplementation) AnswerQuestion(questionID graphql.ID, b
     Author: accountID,
   }
   //put answer in repo
-  service.questionRepo.UpdateItemListAdd(string(questionID), "Answers", []*entity.AnswerEntity{answer})
-  //get account of answer author for model
-  account,_ := service.accountRepo.GetItemById(accountID)
+  service.QuestionRepository.UpdateItemListAdd(string(questionID), "Answers", []*entity.AnswerEntity{answer})
+  //get accountModel of answer's author
+  accountService := NewAccountService()
+  accountModel,_ := accountService.GetAccountById(accountID)
   //create answer model
   answerModel := &model.AnswerModel{
     ID: graphql.ID(answer.ID),
     Body: answer.Body,
-    Author: &model.AccountModel{
-      ID: graphql.ID(account.ID),
-      Email: account.Email,
-      Username: account.Username,
-    },
+    Author: accountModel,
   }
   return answerModel, nil
 }
 
 func (service *QnAServiceImplementation) GetQuestionById(ID graphql.ID)(*model.QuestionModel, error){
   //get question entity from repo
-  question,_ := service.questionRepo.GetItemById(ID)
+  question,_ := service.QuestionRepository.GetItemById(ID)
   //get account of answer author for model
-  account,_ := service.accountRepo.GetItemById(account.Author)
+  accountService := NewAccountService()
+  accountModel,_ := accountService.GetAccountById(question.Author)
   //parse entity to model
   questionModel := &model.QuestionModel{
     ID: question.ID,
@@ -70,10 +66,6 @@ func (service *QnAServiceImplementation) GetQuestionById(ID graphql.ID)(*model.Q
 
       }
     },
-    Author: &model.AccountModel{
-      ID: graphql.ID(account.ID),
-      Email: account.Email,
-      Username: account.Username,
-    },
+    Author: accountModel,
   }
 }
