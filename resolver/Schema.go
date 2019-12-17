@@ -50,16 +50,6 @@ var Schema = `
     author: Account!
   }
 
-  type AnswerConnection{
-      edges: [AnswerEdge]!
-      pageInfo: PageInfo!
-  }
-
-  type AnswerEdge{
-    cursor: ID!
-    node: Answer
-  }
-
   type PageInfo{
     startCursor: ID
     endCursor: ID

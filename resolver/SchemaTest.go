@@ -8,6 +8,7 @@ var SchemaTest = `
 
   type Query{
     account(id: ID!): Account
+    question(id: ID!): Question
   }
 
   type Mutation{
@@ -20,6 +21,14 @@ var SchemaTest = `
     id: ID!
     email: String!
     username: String!
+  }
+
+  type Question{
+    id: ID!
+    title: String!
+    body: String!
+    answers: AnswerConnection!
+    author: Account!
   }
 
   type Answer{
