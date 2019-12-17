@@ -37,7 +37,7 @@ func (service *QnAServiceImplementation) AnswerQuestion(questionID graphql.ID, b
   service.QuestionRepository.UpdateItemListAdd(string(questionID), "Answers", []*entity.AnswerEntity{answer})
   //get accountModel of answer's author
   accountService := NewAccountService()
-  accountModel,_ := accountService.GetAccountById(accountID)
+  accountModel,_ := accountService.GetAccountById(graphql.ID(accountID))
   //create answer model
   answerModel := &model.AnswerModel{
     ID: graphql.ID(answer.ID),
@@ -49,29 +49,30 @@ func (service *QnAServiceImplementation) AnswerQuestion(questionID graphql.ID, b
 
 func (service *QnAServiceImplementation) GetQuestionById(ID graphql.ID)(*model.QuestionModel, error){
   //get question entity from repo
-  question,_ := service.QuestionRepository.GetItemById(ID)
+  question,_ := service.QuestionRepository.GetItemById(string(ID))
   //create account service to get accountModel of author
   accountService := NewAccountService()
   //convert answersEntity to answersModel
   var answersModel []*model.AnswerModel
   for _,answer := range(question.Answers) {
     //get accountModel of answer author
-    accountModel := accountService.GetAccountById(answer.Author)
+    accountModel,_ := accountService.GetAccountById(graphql.ID(answer.Author))
     answerModel := &model.AnswerModel{
-      ID: answer.ID,
+      ID: graphql.ID(answer.ID),
       Body: answer.Body,
       Author: accountModel,
     }
     answersModel = append(answersModel, answerModel)
   }
   //get accountModel of question author
-  accountModel,_ := accountService.GetAccountById(question.Author)
+  accountModel,_ := accountService.GetAccountById(graphql.ID(question.Author))
   //parse entity to model
   questionModel := &model.QuestionModel{
-    ID: question.ID,
+    ID: graphql.ID(question.ID),
     Title: question.Title,
-    Body: question.Title,
+    Body: question.Body,
     Answers: answersModel,
     Author: accountModel,
   }
+  return questionModel, nil
 }

@@ -45,7 +45,7 @@ func (r *Resolver) AnswerQuestion(args struct{
 
 func (r *Resolver) Question(args struct{ID graphql.ID})(*QuestionResolver){
   service := service.NewQnAService()
-  question := service.GetQuestionById(args.ID)
+  question,_ := service.GetQuestionById(args.ID)
   return &QuestionResolver{question}
 }
 

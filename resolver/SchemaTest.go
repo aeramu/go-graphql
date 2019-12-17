@@ -27,7 +27,7 @@ var SchemaTest = `
     id: ID!
     title: String!
     body: String!
-    answers: AnswerConnection!
+    answers: [Answer]!
     author: Account!
   }
 
