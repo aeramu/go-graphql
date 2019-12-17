@@ -50,22 +50,28 @@ func (service *QnAServiceImplementation) AnswerQuestion(questionID graphql.ID, b
 func (service *QnAServiceImplementation) GetQuestionById(ID graphql.ID)(*model.QuestionModel, error){
   //get question entity from repo
   question,_ := service.QuestionRepository.GetItemById(ID)
-  //get account of answer author for model
+  //create account service to get accountModel of author
   accountService := NewAccountService()
+  //convert answersEntity to answersModel
+  var answersModel []*model.AnswerModel
+  for _,answer := range(question.Answers) {
+    //get accountModel of answer author
+    accountModel := accountService.GetAccountById(answer.Author)
+    answerModel := &model.AnswerModel{
+      ID: answer.ID,
+      Body: answer.Body,
+      Author: accountModel,
+    }
+    answersModel = append(answersModel, answerModel)
+  }
+  //get accountModel of question author
   accountModel,_ := accountService.GetAccountById(question.Author)
   //parse entity to model
   questionModel := &model.QuestionModel{
     ID: question.ID,
     Title: question.Title,
     Body: question.Title,
-    Answers: &model.AnswerConnectionModel{
-      Edges: []*model.AnswerEdgeModel{
-
-      },
-      PageInfo: &model.PageInfoModel{
-
-      }
-    },
+    Answers: answersModel,
     Author: accountModel,
   }
 }

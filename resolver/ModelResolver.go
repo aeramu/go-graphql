@@ -30,8 +30,13 @@ func (r *QuestionResolver) Title()(string){
 func (r *QuestionResolver) Body()(string){
   return r.m.Body
 }
-func (r *QuestionResolver) Answers()(*AnswerConnectionResolver){
-  return &AnswerConnectionResolver{r.m.Answers}
+func (r *QuestionResolver) Answers()([]*AnswerResolver){
+  var answers []*AnswerResolver
+  //  get answer edge resolver from every edge in edges
+  for _,answer := range(r.m.Answers) {
+    answers = append(answers, &AnswerResolver{answer})
+  }
+  return answers
 }
 func (r *QuestionResolver) Author()(*AccountResolver){
   return &AccountResolver{r.m.Author}
@@ -73,31 +78,6 @@ func (r *AnswerResolver) Body()(string){
 }
 func (r *AnswerResolver) Author()(*AccountResolver){
   return &AccountResolver{r.m.Author}
-}
-
-type AnswerEdgeResolver struct{
-  m *model.AnswerEdgeModel
-}
-func (r *AnswerEdgeResolver) Cursor()(graphql.ID){
-  return r.m.Cursor
-}
-func (r *AnswerEdgeResolver) Node()(*AnswerResolver){
-  return &AnswerResolver{r.m.Node}
-}
-
-type AnswerConnectionResolver struct{
-  m *model.AnswerConnectionModel
-}
-func (r *AnswerConnectionResolver) Edges()([]*AnswerEdgeResolver){
-  var edges []*AnswerEdgeResolver
-  //  get answer edge resolver from every edge in edges
-  for _,edge := range(r.m.Edges) {
-    edges = append(edges, &AnswerEdgeResolver{edge})
-  }
-  return edges
-}
-func (r *AnswerConnectionResolver) PageInfo()(*PageInfoResolver){
-  return &PageInfoResolver{r.m.PageInfo}
 }
 
 type PageInfoResolver struct{
