@@ -11,7 +11,7 @@ import(
 )
 
 func main(){
-  schema := graphql.MustParseSchema(resolver.Schema, &resolver.Resolver{})
+  schema := graphql.MustParseSchema(resolver.SchemaTest, &resolver.Resolver{})
   http.Handle("/query",&relay.Handler{Schema: schema})
 
   // graphiql

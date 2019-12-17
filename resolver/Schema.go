@@ -7,9 +7,10 @@ var Schema = `
   }
 
   type Query{
+    me: Account
     account(id: ID!): Account
     question(id: ID!): Question
-    questionList(): [Question]!
+    questionList: QuestionConnection!
   }
 
   type Mutation{
@@ -29,13 +30,39 @@ var Schema = `
     id: ID!
     title: String!
     body: String!
-    answers: [Answer]!
+    answers: AnswerConnection!
     author: Account!
+  }
+
+  type QuestionConnection{
+      edges: [QuestionEdge]!
+      pageInfo: PageInfo!
+  }
+
+  type QuestionEdge{
+    cursor: ID!
+    node: Question
   }
 
   type Answer{
     id: ID!
     body: String!
     author: Account!
+  }
+
+  type AnswerConnection{
+      edges: [AnswerEdge]!
+      pageInfo: PageInfo!
+  }
+
+  type AnswerEdge{
+    cursor: ID!
+    node: Answer
+  }
+
+  type PageInfo{
+    startCursor: ID
+    endCursor: ID
+    hasNextPage: Boolean!
   }
 `
