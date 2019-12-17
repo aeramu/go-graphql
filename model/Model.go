@@ -14,7 +14,7 @@ type QuestionModel struct{
   ID graphql.ID
   Title string
   Body string
-  Answers *AnswerConnectionModel
+  Answers []*AnswerModel
   Author *AccountModel
 }
 
@@ -32,16 +32,6 @@ type AnswerModel struct{
   ID graphql.ID
   Body string
   Author *AccountModel
-}
-
-type AnswerEdgeModel struct{
-  Cursor graphql.ID
-  Node *AnswerModel
-}
-
-type AnswerConnectionModel struct{
-  Edges []*AnswerEdgeModel
-  PageInfo *PageInfoModel
 }
 
 type PageInfoModel struct{
