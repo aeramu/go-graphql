@@ -8,7 +8,6 @@ import(
 
 type Resolver struct{}
 
-//Query
 func (r *Resolver) Account(args struct{ID graphql.ID})(*AccountResolver){
   service := service.NewAccountService()
   account,_ := service.GetAccountById(args.ID)
@@ -44,16 +43,16 @@ func (r *Resolver) AnswerQuestion(args struct{
   return &AnswerResolver{answer}
 }
 
+func (r *Resolver) Question(args struct{ID graphql.ID})(*QuestionResolver){
+  service := service.NewQnAService()
+  question := service.GetQuestionById(args.ID)
+  return &QuestionResolver{question}
+}
+
 // func (r *Resolver) Me()(*AccountResolver){
 //   service := service.NewAccountService()
 //   account := service.GetAccountById()
 //   return &AccountResolver{account}
-// }
-//
-// func (r *Resolver) Question(args struct{ID graphql.ID})(*QuestionResolver){
-//   service := service.NewQnAService()
-//   question := service.GetQuestionById(args.ID)
-//   return &QuestionResolver{question}
 // }
 //
 // func (r *Resolver) QuestionList()(*QuestionConnectionResolver){

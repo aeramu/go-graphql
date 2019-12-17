@@ -11,6 +11,7 @@ import(
 
 type QnAService interface{
   AnswerQuestion(questionID graphql.ID, body string)(*model.AnswerModel, error)
+  GetQuestionById(ID graphql.ID)(*model.QuestionModel, error)
 }
 
 func NewQnAService()(QnAService){
@@ -49,4 +50,30 @@ func (service *QnAServiceImplementation) AnswerQuestion(questionID graphql.ID, b
     },
   }
   return answerModel, nil
+}
+
+func (service *QnAServiceImplementation) GetQuestionById(ID graphql.ID)(*model.QuestionModel, error){
+  //get question entity from repo
+  question,_ := service.questionRepo.GetItemById(ID)
+  //get account of answer author for model
+  account,_ := service.accountRepo.GetItemById(account.Author)
+  //parse entity to model
+  questionModel := &model.QuestionModel{
+    ID: question.ID,
+    Title: question.Title,
+    Body: question.Title,
+    Answers: &model.AnswerConnectionModel{
+      Edges: []*model.AnswerEdgeModel{
+
+      },
+      PageInfo: &model.PageInfoModel{
+
+      }
+    },
+    Author: &model.AccountModel{
+      ID: graphql.ID(account.ID),
+      Email: account.Email,
+      Username: account.Username,
+    },
+  }
 }
