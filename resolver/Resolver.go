@@ -6,28 +6,6 @@ import(
   "github.com/graph-gophers/graphql-go"
 )
 
-var SchemaTest = `
-  schema{
-    query: Query
-    mutation: Mutation
-  }
-
-  type Query{
-    account(id: ID!): Account
-  }
-
-  type Mutation{
-    registerAccount(email: String!, username: String!, password: String!): String!
-    loginAccount(email: String = "", username: String = "", password: String!): String!
-  }
-
-  type Account{
-    id: ID!
-    email: String!
-    username: String!
-  }
-`
-
 type Resolver struct{}
 
 //Query
@@ -56,6 +34,16 @@ func (r *Resolver) RegisterAccount(args struct{
   token,_ := service.RegisterAccount(args.Email,args.Username,args.Password)
   return token
 }
+
+func (r *Resolver) AnswerQuestion(args struct{
+  QuestionID graphql.ID
+  Body string
+})(*AnswerResolver){
+  service := service.NewQnAService()
+  answer,_ := service.AnswerQuestion(args.QuestionID,args.Body)
+  return &AnswerResolver{answer}
+}
+
 // func (r *Resolver) Me()(*AccountResolver){
 //   service := service.NewAccountService()
 //   account := service.GetAccountById()
@@ -79,11 +67,4 @@ func (r *Resolver) RegisterAccount(args struct{
 //   Body string
 // })(*QuestionResolver){
 //   return &QuestionResolver{question}
-// }
-//
-// func (r *Resolver) AnswerQuestion(args struct{
-//   QuestionID graphql.ID
-//   Body string
-// })(*AnswerResolver){
-//   return &AnswerResolver{answer}
 // }

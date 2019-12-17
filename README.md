@@ -1,6 +1,7 @@
 # GaneshaHub
 
 ##Dependency
+
 for main.go:
   - package resolver
   - "github.com/graph-gophers/graphql-go"
