@@ -63,10 +63,10 @@ func (service *AccountServiceImplementation) LoginAccount(email string, username
 func (service *AccountServiceImplementation) RegisterAccount(email string, username string, password string)(string, error){
   //checking if email or username already taken
   if account,_ := service.repo.GetItemByIndex("Email", email); account != nil{
-    return "email already registered"
+    return "email already registered", nil
   }
   if account,_ := service.repo.GetItemByIndex("Username", username); account != nil{
-    return "username already taken"
+    return "username already taken", nil
   }
 
   // create account entity
@@ -83,5 +83,5 @@ func (service *AccountServiceImplementation) RegisterAccount(email string, usern
   // create JWT to send to the client
   token := CreateJWT(account.ID)
 
-  return token
+  return token, nil
 }

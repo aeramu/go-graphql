@@ -9,10 +9,16 @@ import(
 var SchemaTest = `
   schema{
     query: Query
+    mutation: Mutation
   }
 
   type Query{
     account(id: ID!): Account
+  }
+
+  type Mutation{
+    registerAccount(email: String!, username: String!, password: String!): String!
+    loginAccount(email: String = "", username: String = "", password: String!): String!
   }
 
   type Account{
