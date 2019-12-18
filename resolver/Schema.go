@@ -1,5 +1,7 @@
 package resolver
 
+type Resolver struct{}
+
 var Schema = `
   schema{
     query: Query
@@ -30,7 +32,7 @@ var Schema = `
     id: ID!
     title: String!
     body: String!
-    answers: AnswerConnection!
+    answers: [Answer]!
     author: Account!
   }
 

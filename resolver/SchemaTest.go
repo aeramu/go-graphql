@@ -15,6 +15,7 @@ var SchemaTest = `
     registerAccount(email: String!, username: String!, password: String!): String!
     loginAccount(email: String = "", username: String = "", password: String!): String!
     answerQuestion(questionID: ID!, body: String!): Answer!
+    askQuestion(title: String!, body: String!): Question!
   }
 
   type Account{
@@ -30,7 +31,6 @@ var SchemaTest = `
     answers: [Answer]!
     author: Account!
   }
-
   type Answer{
     id: ID!
     body: String!
