@@ -63,27 +63,14 @@ func (r *Resolver) AskQuestion(args struct{
   return &QuestionResolver{question}
 }
 
-// func (r *Resolver) QuestionList()(*QuestionConnectionResolver){
-//   service := service.NewQnAService()
-//   questionConnection := service.GetQuestionConnection()
-//   return &QuestionConnectionResolver{questionConnection}
-// }
-// func (r *Resolver) QuestionList()([]*QuestionResolver){
-//   // get question list from repository
-//   repo := repository.NewQuestionRepository()
-//   questionList,err := repo.GetItemListSorted("Timestamp")
-//   if err!= nil{
-//     fmt.Println(err.Error())
-//   }
-//
-//   // create question resolver for each question
-//   var questionResolverList []*QuestionResolver
-//   for _,question := range(questionList){
-//     questionResolverList = append(questionResolverList, &QuestionResolver{question})
-//   }
-//
-//   return questionResolverList
-// }
+func (r *Resolver) QuestionList()(*QuestionConnectionResolver){
+  // create question repository to access DB
+  questionRepository := repository.NewQuestionRepository()
+  // get question list from repository
+  questionList,_ := questionRepository.GetItemListSorted("Timestamp")
+  // return question conncetion resolver
+  return &QuestionConnectionResolver{questionList}
+}
 
 type QuestionResolver struct{
   a *entity.QuestionEntity
@@ -128,31 +115,32 @@ func (r *AnswerResolver) Author()(*AccountResolver){
   return new(Resolver).Account(input)
 }
 
-// type QuestionEdgeResolver struct{
-//   m *model.QuestionEdgeModel
-// }
-// func (r *QuestionEdgeResolver) Cursor()(graphql.ID){
-//   return r.m.Cursor
-// }
-// func (r *QuestionEdgeResolver) Node()(*QuestionResolver){
-//   return &QuestionResolver{r.m.Node}
-// }
-//
-// type QuestionConnectionResolver struct{
-//   m *model.QuestionConnectionModel
-// }
-// func (r *QuestionConnectionResolver) Edges()([]*QuestionEdgeResolver){
-//   var edges []*QuestionEdgeResolver
-//   //  get answer edge resolver from every edge in edges
-//   for _,edge := range(r.m.Edges) {
-//     edges = append(edges, &QuestionEdgeResolver{edge})
-//   }
-//   return edges
-// }
-// func (r *QuestionConnectionResolver) PageInfo()(*PageInfoResolver){
-//   return &PageInfoResolver{r.m.PageInfo}
-// }
-//
+type QuestionEdgeResolver struct{
+  a *entity.QuestionEntity
+}
+func (r *QuestionEdgeResolver) Cursor()(graphql.ID){
+  return graphql.ID(r.a.ID)
+}
+func (r *QuestionEdgeResolver) Node()(*QuestionResolver){
+  return &QuestionResolver{r.a}
+}
+
+type QuestionConnectionResolver struct{
+  questionList []*entity.QuestionEntity
+  lastKey string
+}
+func (r *QuestionConnectionResolver) Edges()([]*QuestionEdgeResolver){
+  var edges []*QuestionEdgeResolver
+  //  get answer edge resolver from every edge in edges
+  for _,edge := range(r.questionList) {
+    edges = append(edges, &QuestionEdgeResolver{edge})
+  }
+  return edges
+}
+func (r *QuestionConnectionResolver) PageInfo()(*PageInfoResolver){
+  return &PageInfoResolver{r.m.PageInfo}
+}
+
 
 // type PageInfoResolver struct{
 //   m *model.PageInfoModel

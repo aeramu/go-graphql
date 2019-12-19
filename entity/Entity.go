@@ -17,6 +17,12 @@ type QuestionEntity struct{
   Timestamp int64
 }
 
+type QuestionCursor struct{
+  ID string
+  Timestamp int64
+  Type string
+}
+
 type AnswerEntity struct{
   ID string
   Body string

@@ -12,7 +12,7 @@ import (
 type QuestionRepository interface{
   PutItem(question *entity.QuestionEntity) (error)
   GetItemById(ID string) (*entity.QuestionEntity, error)
-  GetItemListSorted(indexName string) ([]*entity.QuestionEntity, error)
+  GetItemListSorted(indexName string, limit int64, startKey *entity.QuestionCursor) ([]*entity.QuestionEntity, *entity.QuestionCursor, error)
   UpdateItemListAdd(ID string, attributeName string, attributeValue interface{}) (error)
 }
 
@@ -94,12 +94,19 @@ func (repository *QuestionRepositoryImplementation) GetItemById(ID string) (*ent
   return question, nil
 }
 
-func (repository *QuestionRepositoryImplementation) GetItemListSorted(indexName string) ([]*entity.QuestionEntity, error){
+func (repository *QuestionRepositoryImplementation) GetItemListSorted(indexName string, limit int64, startKey *entity.QuestionCursor) ([]*entity.QuestionEntity, *entity.QuestionCursor, error){
   expressionAttributeNames := make(map[string]*string)
   expressionAttributeNames["#key"] = aws.String("Type")
 
   expressionAttributeValues := make(map[string]*dynamodb.AttributeValue)
   expressionAttributeValues[":value"],_ = dynamodbattribute.Marshal("Question")
+
+  key := make(map[string]*dynamodb.AttributeValue)
+  if startKey != nil{
+    key,_ = dynamodbattribute.MarshalMap(startKey)
+  } else{
+    key = nil
+  }
 
   input := &dynamodb.QueryInput{
     TableName: repository.tableName,
@@ -108,20 +115,24 @@ func (repository *QuestionRepositoryImplementation) GetItemListSorted(indexName 
     ExpressionAttributeValues: expressionAttributeValues,
     KeyConditionExpression: aws.String("#key = :value"),
     ScanIndexForward: aws.Bool(false),
+    Limit: aws.Int64(limit),
+    ExclusiveStartKey: key,
   }
 
   result, err := repository.db.Query(input)
   if err != nil{
-    return nil, err
+    return nil, nil, err
   }
 
-  questions := new([]*entity.QuestionEntity)
-  err = dynamodbattribute.UnmarshalListOfMaps(result.Items, questions)
+  questions := make([]*entity.QuestionEntity,limit)
+  err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &questions)
   if err != nil{
-    return nil, err
+    return nil, nil, err
   }
+  lastKey := new(entity.QuestionCursor)
+  dynamodbattribute.UnmarshalMap(result.LastEvaluatedKey, lastKey)
 
-  return *questions, nil
+  return questions, lastKey, nil
 }
 
 func (repository *QuestionRepositoryImplementation) UpdateItemListAdd(ID string, attributeName string, attributeValue interface{}) (error){

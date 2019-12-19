@@ -9,6 +9,7 @@ var SchemaTest = `
   type Query{
     account(id: ID!): Account
     question(id: ID!): Question
+    questionList: QuestionConnection!
   }
 
   type Mutation{
@@ -31,6 +32,23 @@ var SchemaTest = `
     answers: [Answer]!
     author: Account!
   }
+
+  type QuestionConnection{
+      edges: [QuestionEdge]!
+      pageInfo: PageInfo!
+  }
+
+  type QuestionEdge{
+    cursor: ID!
+    node: Question
+  }
+
+  type PageInfo{
+    startCursor: ID
+    endCursor: ID
+    hasNextPage: Boolean!
+  }
+  
   type Answer{
     id: ID!
     body: String!
