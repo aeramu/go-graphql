@@ -129,8 +129,14 @@ func (repository *QuestionRepositoryImplementation) GetItemListSorted(indexName 
   if err != nil{
     return nil, nil, err
   }
+  
   lastKey := new(entity.QuestionCursor)
-  dynamodbattribute.UnmarshalMap(result.LastEvaluatedKey, lastKey)
+  if result.LastEvaluatedKey != nil{
+    dynamodbattribute.UnmarshalMap(result.LastEvaluatedKey, lastKey)
+  } else{
+    lastKey = nil
+  }
+
 
   return questions, lastKey, nil
 }

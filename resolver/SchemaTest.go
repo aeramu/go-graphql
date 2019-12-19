@@ -9,7 +9,7 @@ var SchemaTest = `
   type Query{
     account(id: ID!): Account
     question(id: ID!): Question
-    questionList: QuestionConnection!
+    questionList(first: Int!, after: ID): QuestionConnection!
   }
 
   type Mutation{
@@ -44,11 +44,11 @@ var SchemaTest = `
   }
 
   type PageInfo{
-    startCursor: ID
-    endCursor: ID
+    startCursor: ID!
+    endCursor: ID!
     hasNextPage: Boolean!
   }
-  
+
   type Answer{
     id: ID!
     body: String!

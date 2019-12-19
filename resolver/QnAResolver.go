@@ -3,8 +3,9 @@ package resolver
 import(
   "github.com/aeramu/go-graphql/repository"
   "github.com/aeramu/go-graphql/entity"
-
+  //"fmt"
   "time"
+  "encoding/json"
   "github.com/google/uuid"
   "github.com/graph-gophers/graphql-go"
 )
@@ -63,13 +64,22 @@ func (r *Resolver) AskQuestion(args struct{
   return &QuestionResolver{question}
 }
 
-func (r *Resolver) QuestionList()(*QuestionConnectionResolver){
+func (r *Resolver) QuestionList(args struct{
+  First int32
+  After *graphql.ID
+})(*QuestionConnectionResolver){
   // create question repository to access DB
   questionRepository := repository.NewQuestionRepository()
   // get question list from repository
-  questionList,_ := questionRepository.GetItemListSorted("Timestamp")
+  startCursor := new(entity.QuestionCursor)
+  if args.After != nil{
+    json.Unmarshal([]byte(string(*args.After)),startCursor)
+  } else{
+    startCursor = nil
+  }
+  questionList,lastCursor,_ := questionRepository.GetItemListSorted("Timestamp",int64(args.First),startCursor)
   // return question conncetion resolver
-  return &QuestionConnectionResolver{questionList}
+  return &QuestionConnectionResolver{questionList,lastCursor}
 }
 
 type QuestionResolver struct{
@@ -119,7 +129,12 @@ type QuestionEdgeResolver struct{
   a *entity.QuestionEntity
 }
 func (r *QuestionEdgeResolver) Cursor()(graphql.ID){
-  return graphql.ID(r.a.ID)
+  cursor,_ := json.Marshal(&entity.QuestionCursor{
+    ID: r.a.ID,
+    Timestamp: r.a.Timestamp,
+    Type: r.a.Type,
+  })
+  return graphql.ID(string(cursor))
 }
 func (r *QuestionEdgeResolver) Node()(*QuestionResolver){
   return &QuestionResolver{r.a}
@@ -127,7 +142,7 @@ func (r *QuestionEdgeResolver) Node()(*QuestionResolver){
 
 type QuestionConnectionResolver struct{
   questionList []*entity.QuestionEntity
-  lastKey string
+  lastCursor *entity.QuestionCursor
 }
 func (r *QuestionConnectionResolver) Edges()([]*QuestionEdgeResolver){
   var edges []*QuestionEdgeResolver
@@ -138,19 +153,32 @@ func (r *QuestionConnectionResolver) Edges()([]*QuestionEdgeResolver){
   return edges
 }
 func (r *QuestionConnectionResolver) PageInfo()(*PageInfoResolver){
-  return &PageInfoResolver{r.m.PageInfo}
+  startCursor,_ := json.Marshal(&entity.QuestionCursor{
+    ID: r.questionList[0].ID,
+    Timestamp: r.questionList[0].Timestamp,
+    Type: r.questionList[0].Type,
+  })
+  lastCursor := ""
+  if r.lastCursor != nil{
+    cursor,_ := json.Marshal(r.lastCursor)
+    lastCursor = string(cursor)
+  }
+  hasNextPage := (r.lastCursor != nil)
+  return &PageInfoResolver{string(startCursor),lastCursor,hasNextPage}
 }
 
 
-// type PageInfoResolver struct{
-//   m *model.PageInfoModel
-// }
-// func (r *PageInfoResolver) StartCursor()(graphql.ID){
-//   return r.m.StartCursor
-// }
-// func (r *PageInfoResolver) EndCursor()(graphql.ID){
-//   return r.m.EndCursor
-// }
-// func (r *PageInfoResolver) HasNextPage()(bool){
-//   return r.m.HasNextPage
-// }
+type PageInfoResolver struct{
+  startCursor string
+  endCursor string
+  hasNextPage bool
+}
+func (r *PageInfoResolver) StartCursor()(graphql.ID){
+  return graphql.ID(r.startCursor)
+}
+func (r *PageInfoResolver) EndCursor()(graphql.ID){
+  return graphql.ID(r.endCursor)
+}
+func (r *PageInfoResolver) HasNextPage()(bool){
+  return r.hasNextPage
+}
