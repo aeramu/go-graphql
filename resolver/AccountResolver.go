@@ -5,6 +5,7 @@ import(
   "github.com/aeramu/go-graphql/entity"
   "github.com/aeramu/go-graphql/service"
 
+  "context"
   "github.com/google/uuid"
   "github.com/graph-gophers/graphql-go"
 )
@@ -79,12 +80,20 @@ func (r *Resolver) RegisterAccount(args struct{
   // return jwt to the client
   return token
 }
-//
-// func (r *Resolver) Me()(*AccountResolver){
-//   service := service.NewAccountService()
-//   account := service.GetAccountById()
-//   return &AccountResolver{account}
-// }
+
+func (r *Resolver) Me(ctx context.Context)(*AccountResolver){
+  token := ctx.Value("token").(string)
+	accountID := service.DecodeJWT(token)
+  if accountID == ""{
+    return nil
+  }
+  // create account repository to access DB
+  accountRepository := repository.NewAccountRepository()
+  // get account from DB
+  account,_ := accountRepository.GetItemById(accountID)
+  // return accountResolver
+  return &AccountResolver{account}
+}
 
 type AccountResolver struct{
   a *entity.AccountEntity

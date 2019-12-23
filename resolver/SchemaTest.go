@@ -7,9 +7,10 @@ var SchemaTest = `
   }
 
   type Query{
+    me: Account
     account(id: ID!): Account
     question(id: ID!): Question
-    questionList(first: Int!, after: ID): QuestionConnection!
+    questionList(first: Int = 30, after: ID): QuestionConnection!
   }
 
   type Mutation{
@@ -40,7 +41,7 @@ var SchemaTest = `
 
   type QuestionEdge{
     cursor: ID!
-    node: Question
+    node: Question!
   }
 
   type PageInfo{

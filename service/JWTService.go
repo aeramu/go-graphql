@@ -20,7 +20,11 @@ func CreateJWT(payload string)(string){
   return "token="+token
 }
 
-func GetJWTPayload(token string)(string){
-  payload := "payload"
-  return payload
+func DecodeJWT(token string)(string){
+  token = token[6:]
+  claims := new(JWTClaims)
+  jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return token, nil
+	})
+  return claims.Payload
 }

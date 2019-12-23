@@ -70,13 +70,14 @@ func (r *Resolver) QuestionList(args struct{
 })(*QuestionConnectionResolver){
   // create question repository to access DB
   questionRepository := repository.NewQuestionRepository()
-  // get question list from repository
+  // create start cursor for question list
   startCursor := new(entity.QuestionCursor)
   if args.After != nil{
     json.Unmarshal([]byte(string(*args.After)),startCursor)
   } else{
     startCursor = nil
   }
+  // get question list from repository
   questionList,lastCursor,_ := questionRepository.GetItemListSorted("Timestamp",int64(args.First),startCursor)
   // return question conncetion resolver
   return &QuestionConnectionResolver{questionList,lastCursor}
