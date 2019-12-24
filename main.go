@@ -15,7 +15,7 @@ func main(){
   lambda.Start(handler)
 }
 
-func handler(context context.Context, request events.APIGatewayProxyRequest)(events.APIGatewayProxyResponse, error){
+func handler(ctx context.Context, request events.APIGatewayProxyRequest)(events.APIGatewayProxyResponse, error){
   schema := graphql.MustParseSchema(resolver.Schema, &resolver.Resolver{})
 
   var params struct{
@@ -25,7 +25,9 @@ func handler(context context.Context, request events.APIGatewayProxyRequest)(eve
   }
   json.Unmarshal([]byte(request.Body), &params)
 
-  response := schema.Exec(context, params.Query, params.OperationName, params.Variables)
+  ctx1 := context.WithValue(ctx, "token", request.Headers["token"])
+
+  response := schema.Exec(ctx1, params.Query, params.OperationName, params.Variables)
   responseJSON,_ := json.Marshal(response)
 
   return events.APIGatewayProxyResponse{
