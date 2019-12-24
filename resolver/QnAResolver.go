@@ -3,19 +3,22 @@ package resolver
 import(
   "github.com/aeramu/go-graphql/repository"
   "github.com/aeramu/go-graphql/entity"
-  //"fmt"
+  "github.com/aeramu/go-graphql/service"
+
+  "context"
   "time"
   "encoding/json"
   "github.com/google/uuid"
   "github.com/graph-gophers/graphql-go"
 )
 
-func (r *Resolver) AnswerQuestion(args struct{
+func (r *Resolver) AnswerQuestion(ctx context.Context, args struct{
   QuestionID graphql.ID
   Body string
 })(*AnswerResolver){
-  //get accountID from jwt (TODO: JWTService and get header from request)
-  accountID := "3"
+  //get accountID from jwt
+  token := ctx.Value("token").(string)
+	accountID := service.DecodeJWT(token)
   //create answer entity
   answer := &entity.AnswerEntity{
     ID: uuid.New().String(),
@@ -41,12 +44,13 @@ func (r *Resolver) Question(args struct{
   return &QuestionResolver{question}
 }
 
-func (r *Resolver) AskQuestion(args struct{
+func (r *Resolver) AskQuestion(ctx context.Context, args struct{
   Title string
   Body string
 })(*QuestionResolver){
   //get accountID from jwt (TODO: JWTService and get header from request)
-  accountID := "1"
+  token := ctx.Value("token").(string)
+	accountID := service.DecodeJWT(token)
   // create question entity
   question := &entity.QuestionEntity{
     ID: uuid.New().String(),

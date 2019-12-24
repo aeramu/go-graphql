@@ -85,9 +85,6 @@ func (r *Resolver) RegisterAccount(args struct{
 func (r *Resolver) Me(ctx context.Context)(*AccountResolver){
   token := ctx.Value("token").(string)
 	accountID := service.DecodeJWT(token)
-  if accountID == ""{
-    return nil
-  }
   // create account repository to access DB
   accountRepository := repository.NewAccountRepository()
   // get account from DB
