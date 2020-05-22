@@ -15,7 +15,6 @@ type AccountRepository interface{
   GetItemByIndex(indexName string, indexValue string) (*entity.AccountEntity, error)
 }
 
-
 // Constructor for AccountRepository
 func NewAccountRepository()(AccountRepository){
   return &AccountRepositoryImplementation{
