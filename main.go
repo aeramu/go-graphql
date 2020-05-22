@@ -18,16 +18,16 @@ func main(){
 func handler(ctx context.Context, request events.APIGatewayProxyRequest)(events.APIGatewayProxyResponse, error){
   schema := graphql.MustParseSchema(resolver.Schema, &resolver.Resolver{})
 
-  var params struct{
+  var parameter struct{
       Query string
       OperationName string
       Variables map[string]interface{}
   }
-  json.Unmarshal([]byte(request.Body), &params)
+  json.Unmarshal([]byte(request.Body), &parameter)
 
-  ctx1 := context.WithValue(ctx, "token", request.Headers["token"])
+  ctxWithToken := context.WithValue(ctx, "token", request.Headers["token"])
 
-  response := schema.Exec(ctx1, params.Query, params.OperationName, params.Variables)
+  response := schema.Exec(ctxWithToken, parameter.Query, parameter.OperationName, parameter.Variables)
   responseJSON,_ := json.Marshal(response)
 
   return events.APIGatewayProxyResponse{
