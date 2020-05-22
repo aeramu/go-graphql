@@ -1,0 +1,18 @@
+image: golang:1.12.6
+
+variables:
+  APP_PATH: /go/src/github.com/aeramu/go-graphql
+
+stages:
+ - test
+
+before_script:
+  - mkdir -p ${APP_PATH}
+  - cp -r $CI_PROJECT_DIR ${APP_PATH}
+  - ln -s $PWD ${APP_PATH}
+  - go get -v -d ./...
+
+unit_tests:
+  stage: test
+  script:
+    - go build -v ./...
