@@ -6,7 +6,7 @@ import(
   "github.com/aeramu/go-graphql/service"
 
   "context"
-  "encoding/json"
+  //"encoding/json"
   "github.com/google/uuid"
   "github.com/graph-gophers/graphql-go"
 )

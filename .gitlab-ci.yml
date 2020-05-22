@@ -17,3 +17,4 @@ build_app:
   stage: build
   script:
     - go build -v $GOPATH/src/$APP_PATH/go-graphql
+    - ls $GOPATH/src/$APP_PATH/go-graphql
