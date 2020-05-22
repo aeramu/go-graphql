@@ -6,9 +6,7 @@ variables:
 before_script:
   - mkdir -p $GOPATH/src/$APP_PATH
   - ln -s $CI_PROJECT_DIR $GOPATH/src/$APP_PATH
-  - cd $GOPATH/src/$APP_PATH/go-graphql
-  - ls
-  - go get -v -d ./...
+  - go get -v -d $GOPATH/src/$APP_PATH/go-graphql
 
 stages:
  - test
@@ -18,4 +16,4 @@ stages:
 unit_tests:
   stage: test
   script:
-    - go build -v ./...
+    - go build -v $GOPATH/src/$APP_PATH/go-graphql
