@@ -1,4 +1,4 @@
-package repository
+package awsRepository
 
 import (
   "github.com/aeramu/go-graphql/entity"

@@ -1,7 +1,7 @@
 package resolver
 
 import(
-  "github.com/aeramu/go-graphql/repository"
+  repository "github.com/aeramu/go-graphql/awsRepository"
   "github.com/aeramu/go-graphql/entity"
   "github.com/aeramu/go-graphql/service"
 
