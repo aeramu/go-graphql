@@ -1,12 +1,12 @@
 image: golang:latest
 
 variables:
-  APP_PATH: github.com/aeramu/go-graphql
+  APP_PATH: github.com/aeramu
 
 before_script:
   - mkdir -p $GOPATH/src/$APP_PATH
   - ln -s $CI_PROJECT_DIR $GOPATH/src/$APP_PATH
-  - cd $GOPATH/src/$APP_PATH
+  - cd $GOPATH/src/$APP_PATH/go-graphql
   - ls
   - go get -v -d ./...
 
