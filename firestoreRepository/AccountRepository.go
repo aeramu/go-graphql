@@ -3,31 +3,45 @@ package firestoreRepository
 import (
 	"github.com/aeramu/go-graphql/entity"
   
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"context"
+
+	firebase "firebase.google.com/go"
+	"cloud.google.com/go/firestore"
+	"google.golang.org/api/option"
 )
 
 // interface for account repository
 type AccountRepository interface{
 	PutItem(account *entity.AccountEntity) (error)
-	GetItemById(ID string) (*entity.AccountEntity, error)
-	GetItemByIndex(indexName string, indexValue string) (*entity.AccountEntity, error)
+	//GetItemById(ID string) (*entity.AccountEntity, error)
+	//GetItemByIndex(indexName string, indexValue string) (*entity.AccountEntity, error)
 }
 
 // Constructor for AccountRepository
 func NewAccountRepository()(AccountRepository){
+	ctx := context.Background()
+	credential := option.WithCredentialsFile("credential.json")
+	app,_ := firebase.NewApp(ctx, nil, credential)
+	client,_ := app.Firestore(ctx)
 	return &AccountRepositoryImplementation{
-		// name of the table in aws dynamodb
-		tableName: aws.String("AccountTable"),
-		// configuration for dynamodb
-		db: dynamodb.New(session.New(), aws.NewConfig().WithRegion("ap-southeast-1")),
+		client: client,
 	}
 }
 
 // Class for account repository implementation
 type AccountRepositoryImplementation struct{
-	tableName *string
-	db *dynamodb.DynamoDB
+	client *firestore.Client
+}
+
+func (repository *AccountRepositoryImplementation) PutItem(account *entity.AccountEntity) (error){
+	ctx := context.Background()
+	_, _, err := repository.client.Collection("account").Add(ctx, map[string]interface{}{
+        "Email": account.Email,
+        "Username":  account.Username,
+        "Password":  account.Password,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
