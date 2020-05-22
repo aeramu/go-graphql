@@ -1,16 +1,20 @@
-image: golang:1.12.6
+image: golang:latest
 
 variables:
-  APP_PATH: /go/src/github.com/aeramu/go-graphql
+  PATH: github.com/aeramu/go-graphql
+
+before_script:
+  - mkdir -p $GOPATH/src/$PATH
+  - cp -r $CI_PROJECT_DIR $GOPATH/src/$PATH
+  - ln -s $CI_PROJECT_DIR $GOPATH/src/$PATH
+  - cd $GOPATH/src/$PATH
+  - ls
+  - go get -v -d ./...
 
 stages:
  - test
-
-before_script:
-  - mkdir -p ${APP_PATH}
-  - cp -r $CI_PROJECT_DIR ${APP_PATH}
-  - ln -s $PWD ${APP_PATH}
-  - go get -v -d ./...
+ - build
+ - deploy
 
 unit_tests:
   stage: test
