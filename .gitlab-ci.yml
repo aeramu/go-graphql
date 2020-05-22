@@ -13,7 +13,7 @@ stages:
  - build
  - deploy
 
-unit_tests:
-  stage: test
+build_app:
+  stage: build
   script:
     - go build -v $GOPATH/src/$APP_PATH/go-graphql

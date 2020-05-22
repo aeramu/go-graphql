@@ -13,7 +13,7 @@ import (
 // interface for account repository
 type AccountRepository interface{
 	PutItem(account *entity.AccountEntity) (error)
-	//GetItemById(ID string) (*entity.AccountEntity, error)
+	GetItemById(ID string) (*entity.AccountEntity, error)
 	//GetItemByIndex(indexName string, indexValue string) (*entity.AccountEntity, error)
 }
 
