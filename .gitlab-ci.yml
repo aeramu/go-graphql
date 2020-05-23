@@ -1,7 +1,4 @@
-image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-
-services:
-  - golang:latest
+image: golang:latest
 
 variables:
   PROJECT_PATH: /go/src/github.com/aeramu
@@ -9,8 +6,9 @@ variables:
   FUNCTION_NAME: graphql
 
 stages:
- - build
- - deploy
+  - test
+  - build
+  - deploy
 
 build:
   stage: build
@@ -22,8 +20,15 @@ build:
   script:
     - go build -v main.go
 
+test:
+  stage: test
+  script:
+    - go version
+    - ls
+
 deploy-lambda:
   stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
     - apt-get install zip
     - ls
