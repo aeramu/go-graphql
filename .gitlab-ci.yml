@@ -6,8 +6,8 @@ variables:
   FUNCTION_NAME: graphql
 
 stages:
-  - test
   - build
+  - test
   - deploy
 
 build:
@@ -24,7 +24,7 @@ test:
   stage: test
   script:
     - go version
-    - ls
+    - cd $PROJECT_PATH/$PROJECT_NAME
 
 deploy-lambda:
   stage: deploy
