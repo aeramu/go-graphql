@@ -22,8 +22,7 @@ build:
 deploy-lambda:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-  before script:
-    - apt-get install zip
   script:
+    - apt-get install zip
     - zip main.zip $GOPATH/$PROJECT_PATH/$PROJECT_NAME/main
     - aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://main.zip
