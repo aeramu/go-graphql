@@ -1,5 +1,5 @@
 variables:
-  PROJECT_PATH: /src/github.com/aeramu
+  PROJECT_PATH: /go/src/github.com/aeramu
   PROJECT_NAME: go-graphql
   FUNCTION_NAME: graphql
 
@@ -11,10 +11,10 @@ build:
   stage: build
   image: golang:latest
   before_script:
-    - mkdir -p /go/$PROJECT_PATH
-    - ln -s $CI_PROJECT_DIR /go/$PROJECT_PATH
-    - go get -v -d /go/$PROJECT_PATH/$PROJECT_NAME
-    - cd /go/$PROJECT_PATH/$PROJECT_NAME
+    - mkdir -p $PROJECT_PATH
+    - ln -s $CI_PROJECT_DIR $PROJECT_PATH
+    - go get -v -d $PROJECT_PATH/$PROJECT_NAME
+    - cd $PROJECT_PATH/$PROJECT_NAME
   script:
     - go build -v main.go
 
@@ -23,7 +23,7 @@ deploy-lambda:
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
     - apt-get install zip
-    - cd /go/$PROJECT_PATH/$PROJECT_NAME/
+    - cd $PROJECT_PATH/$PROJECT_NAME
   script:
     - zip main.zip main
     - aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://main.zip
