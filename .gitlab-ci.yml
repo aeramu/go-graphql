@@ -1,9 +1,9 @@
-image: golang:latest
-
 variables:
   PROJECT_PATH: /go/src/github.com/aeramu
   PROJECT_NAME: go-graphql
   FUNCTION_NAME: graphql
+  AWS_ACCESS_KEY_ID: AKIASRJURG3KTTLMXCXO
+  AWS_SECRET_ACCESS_KEY: 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
 
 stages:
   - build
@@ -11,13 +11,13 @@ stages:
 
 build:
   stage: build
+  image: golang:latest
   before_script:
     - mkdir -p $PROJECT_PATH
     - ln -s $CI_PROJECT_DIR $PROJECT_PATH
     - go get -v -d $PROJECT_PATH/$PROJECT_NAME
   script:
-    - go build -v $PROJECT_PATH/$PROJECT_NAME/main.go
-    - ls
+    - go build -v $PROJECT_PATH/$PROJECT_NAME/main.goS
   artifacts:
     paths:
       - main
