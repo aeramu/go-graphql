@@ -28,7 +28,7 @@ deploy-lambda:
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
     - apt-get install zip
-    - ls
+    - aws configure --region ap-southeast-1 --output json
   script:
     - zip main.zip main
     - aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://main.zip
