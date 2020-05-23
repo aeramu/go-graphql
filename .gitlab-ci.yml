@@ -3,6 +3,7 @@ image: golang:latest
 variables:
   PROJECT_PATH: /src/github.com/aeramu
   PROJECT_NAME: go-graphql
+  FUNCTION_NAME: graphql
 
 before_script:
   - mkdir -p $GOPATH/$PROJECT_PATH
@@ -18,4 +19,10 @@ build:
   stage: build
   script:
     - go build -v $GOPATH/$PROJECT_PATH/$PROJECT_NAME/main.go
-    - ls $GOPATH/$PROJECT_PATH/$PROJECT_NAME
+
+deploy-lambda:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  script:
+    - zip main.zip main
+    - aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://main.zip
