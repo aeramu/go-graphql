@@ -11,17 +11,19 @@ build:
   stage: build
   image: golang:latest
   before_script:
-    - mkdir -p $GOPATH/$PROJECT_PATH
-    - ln -s $CI_PROJECT_DIR $GOPATH/$PROJECT_PATH
-    - go get -v -d $GOPATH/$PROJECT_PATH/$PROJECT_NAME
+    - mkdir -p /go/$PROJECT_PATH
+    - ln -s $CI_PROJECT_DIR /go/$PROJECT_PATH
+    - go get -v -d /go/$PROJECT_PATH/$PROJECT_NAME
+    - cd /go/$PROJECT_PATH/$PROJECT_NAME
   script:
-    - go build -v $GOPATH/$PROJECT_PATH/$PROJECT_NAME/main.go
-    - echo $GOPATH
+    - go build -v main.go
 
 deploy-lambda:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-  script:
+  before_script:
     - apt-get install zip
-    - zip main.zip $GOPATH/$PROJECT_PATH/$PROJECT_NAME/main
+    - cd /go/$PROJECT_PATH/$PROJECT_NAME/
+  script:
+    - zip main.zip main
     - aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://main.zip
