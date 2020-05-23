@@ -12,7 +12,7 @@ stages:
 build:
   stage: build
   before_script:
-    - apt-get install go
+    - apt-get install golang-go
     - mkdir -p $PROJECT_PATH
     - ln -s $CI_PROJECT_DIR $PROJECT_PATH
     - go get -v -d $PROJECT_PATH/$PROJECT_NAME
