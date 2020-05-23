@@ -17,7 +17,7 @@ build:
     - ln -s $CI_PROJECT_DIR $PROJECT_PATH
     - go get -v -d $PROJECT_PATH/$PROJECT_NAME
   script:
-    - go build -v $PROJECT_PATH/$PROJECT_NAME/main.goS
+    - go build -v $PROJECT_PATH/$PROJECT_NAME/main.go
   artifacts:
     paths:
       - main
