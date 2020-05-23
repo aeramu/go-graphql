@@ -19,7 +19,7 @@ build:
     - go build -v $PROJECT_PATH/$PROJECT_NAME/main.go
     - ls
   artifacts:
-    path:
+    paths:
       - main
       
 
