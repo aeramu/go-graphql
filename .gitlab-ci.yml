@@ -1,23 +1,22 @@
-image: golang:latest
-
 variables:
   PROJECT_PATH: /src/github.com/aeramu
   PROJECT_NAME: go-graphql
   FUNCTION_NAME: graphql
 
 stages:
- - test
  - build
  - deploy
 
 build:
   stage: build
+  image: golang:latest
   before_script:
     - mkdir -p $GOPATH/$PROJECT_PATH
     - ln -s $CI_PROJECT_DIR $GOPATH/$PROJECT_PATH
     - go get -v -d $GOPATH/$PROJECT_PATH/$PROJECT_NAME
   script:
     - go build -v $GOPATH/$PROJECT_PATH/$PROJECT_NAME/main.go
+    - echo $GOPATH
 
 deploy-lambda:
   stage: deploy
