@@ -7,7 +7,6 @@ variables:
 
 stages:
   - build
-  - test
   - deploy
 
 build:
@@ -16,15 +15,13 @@ build:
     - mkdir -p $PROJECT_PATH
     - ln -s $CI_PROJECT_DIR $PROJECT_PATH
     - go get -v -d $PROJECT_PATH/$PROJECT_NAME
-    - cd $PROJECT_PATH/$PROJECT_NAME
   script:
-    - go build -v main.go
-
-test:
-  stage: test
-  script:
-    - go version
-    - cd $PROJECT_PATH/$PROJECT_NAME
+    - go build -v $PROJECT_PATH/$PROJECT_NAME/main.go
+    - ls
+  artifacts:
+    path:
+      - main
+      
 
 deploy-lambda:
   stage: deploy
@@ -32,7 +29,6 @@ deploy-lambda:
   before_script:
     - apt-get install zip
     - ls
-    - cd $PROJECT_PATH/$PROJECT_NAME
   script:
     - zip main.zip main
     - aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://main.zip
