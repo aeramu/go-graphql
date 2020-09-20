@@ -1,9 +1,11 @@
 # go-graphql
 
 ## What is it?
-It's a golang back-end server for QnA app with login, register, askQuestion, and answerQuestion implemented.<br/>
-This project using graphql implementation for API, and for the repository, it has two implementation: AWS DynamoDB and Firestore GCP.
-For the deployment it using AWS lambda
+It's QnA app with login, register, askQuestion, and answerQuestion implemented.<br/>
+This project using golang and graphql implementation for API, and for the repository, it has two implementation: AWS DynamoDB and Firestore GCP.
+For the deployment it using AWS lambda<br/>
+<br/>
+Front-end repo that using this back-end: https://github.com/aeramu/react-native-relay
 
 ## And then what?
 It's just a learning project. I learned a lot at this project.
